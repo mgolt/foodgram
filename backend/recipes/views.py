@@ -32,8 +32,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer.save(author=self.request.user)
 
     @action(detail=True, methods=['get', 'patch'], url_path='edit')
-    def edit(self, request, pk=None):        
-        recipe = self.get_object()
+    def edit(self, request, id=None):
+        print('!!!!!!!!!!!!!!!!!!!!!')
+        recipe = get_object_or_404(self.queryset, pk=id)
         
         if recipe.author != request.user:
             return Response(
@@ -181,16 +182,19 @@ class DownloadShoppingCartView(APIView):
             for ingredient_in_recipe in ingredients_in_recipe:
                 name = ingredient_in_recipe.ingredient.name
                 amount = ingredient_in_recipe.amount
+                measurement_unit = ingredient_in_recipe.ingredient.measurement_unit
 
-                if name in ingredients:
-                    ingredients[name] += amount
+                key = f"{name} ({measurement_unit})"
+
+                if key in ingredients:
+                    ingredients[key] += amount
                 else:
-                    ingredients[name] = amount
+                    ingredients[key] = amount
 
         file_content = 'Список покупок:\n\n'
 
-        for name, amount in ingredients.items():
-            file_content += f'{name}: {amount}\n'
+        for ingredient, amount in ingredients.items():
+            file_content += f'{ingredient}: {amount}\n'
 
         response = HttpResponse(
             file_content,
