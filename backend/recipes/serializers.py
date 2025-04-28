@@ -2,8 +2,6 @@ import base64
 
 from django.core.files.base import ContentFile
 
-from drf_extra_fields.fields import Base64ImageField
-
 from rest_framework import serializers
 
 from .models import (Recipes, Ingredients, RecipeTags, IngredientsInRecipe,
@@ -12,14 +10,14 @@ from tags.models import Tags
 from users.serializers import CustomUserSerializer, CustomUserProfileSerializer
 
 
-# class Base64ImageField(serializers.ImageField):
-#     def to_internal_value(self, data):
-#         if isinstance(data, str) and data.startswith('data:image'):
-#             format, imgstr = data.split(';base64,')
-#             ext = format.split('/')[-1]
-#             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+class Base64ImageField(serializers.ImageField):
+    def to_internal_value(self, data):
+        if isinstance(data, str) and data.startswith('data:image'):
+            format, imgstr = data.split(';base64,')
+            ext = format.split('/')[-1]
+            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
 
-#         return super().to_internal_value(data)
+        return super().to_internal_value(data)
 
 
 class RecipeTagsSerializer(serializers.ModelSerializer):
@@ -166,6 +164,9 @@ class RecipeSerializer(serializers.ModelSerializer):
             many=True
         ).data
 
+        if instance.image:
+            representation['image'] = instance.image.url
+
         return representation
 
     def validate(self, data):
@@ -220,10 +221,8 @@ class FavoriteSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return {
             'id': instance.recipe.id,
-            'name': instance.recipe.name,
-            'image': self.context['request'].build_absolute_uri(
-                instance.recipe.image.url
-            ) if instance.recipe.image else None,
+            'name': instance.recipe.name,                   
+            'image': instance.recipe.image.url if instance.recipe.image.url else None,
             'cooking_time': instance.recipe.cooking_time
         }
 

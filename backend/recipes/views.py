@@ -10,8 +10,6 @@ from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from hashids import Hashids
-
 from .models import (Recipes, Ingredients, Favorite,
                      ShoppingCart, IngredientsInRecipe)
 from .permissions import IsAuthorOrReadOnly
@@ -32,8 +30,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer.save(author=self.request.user)
 
     @action(detail=True, methods=['get', 'patch'], url_path='edit')
-    def edit(self, request, id=None):
-        print('!!!!!!!!!!!!!!!!!!!!!')
+    def edit(self, request, id=None):        
         recipe = get_object_or_404(self.queryset, pk=id)
         
         if recipe.author != request.user:
@@ -61,10 +58,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response({'short-link': short_link}, status=status.HTTP_200_OK)
 
     def generate_short_link(self, recipe):
-        basse_url = self.request.build_absolute_uri('/')
-        hashids = Hashids(salt='your_uniq_salt', min_length=6)
-        hashid = hashids.encode(recipe.id)
-        return f'{basse_url}s/{hashid}'
+        basse_url = self.request.build_absolute_uri('/')        
+        return f'{basse_url}recipes/{recipe.id}'
 
 
 class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):

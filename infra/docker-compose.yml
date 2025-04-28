@@ -3,6 +3,8 @@ version: '3.3'
 volumes:
   pg_data:
   static:
+  media:
+  redoc:
 
 services:
 
@@ -18,8 +20,8 @@ services:
     build: ../backend/    
     volumes:
       - static:/backend_static
-    #   - media:/app/media
-      # - redoc:/app/docs/    
+      - media:/app/media
+      - redoc:/app/docs/    
     env_file:
       - ../.env
 
@@ -34,17 +36,7 @@ services:
   gateway:    
     build: ../gateway/ 
     volumes:
-      - static:/staticfiles/   
+      - static:/staticfiles/
+      - media:/var/html/media/
     ports:
-      - 8000:80 
-
-  # nginx:    
-  #   image: nginx:1.25.4-alpine    
-  #   ports:
-  #     - "80:80"
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/conf.d/default.conf
-  #     - ../frontend/build:/usr/share/nginx/html/
-  #     - ../docs/:/usr/share/nginx/html/api/docs/
-  #     - static:/static
-  #     - media:/media
+      - 80:80
