@@ -16,23 +16,30 @@ services:
       - pg_data:/var/lib/postgresql/data
 
   backend:
+    image: mgolt/foodgram_backend
+    env_file:
+      - ../.env
     build: ../backend/    
     volumes:
       - static:/backend_static
       - media:/app/media
-      - redoc:/app/docs/    
-    env_file:
-      - ../.env
+      - redoc:/app/docs/
+    depends_on:
+      - db        
 
   frontend:    
-    build: ../frontend
+    image: mgolt/foodgram_frontend
+    env_file:
+      - ../.env
     volumes:
       - static:/frontend_static
     depends_on:
       - backend
 
   gateway:    
-    build: ../gateway/ 
+    image: mgolt/foodgram_gateway
+    env_file:
+      - ../.env
     volumes:
       - static:/staticfiles/
       - media:/var/html/media/
