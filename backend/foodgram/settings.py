@@ -28,11 +28,9 @@ SECRET_KEY = 'django-insecure-zw-=4j)0^normpagdt90=^dqmav&3v+9rbg34+yb2rlotv)$v-
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'mg-foodgram.zapto.org',
     'localhost',
     '127.0.0.1',
-    '[::1]',
-    'backend',
-    'testserver',
 ]
 
 
