@@ -30,20 +30,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer.save(author=self.request.user)
 
     @action(detail=True, methods=['get', 'patch'], url_path='edit')
-    def edit(self, request, id=None):        
+    def edit(self, request, id=None):
         recipe = get_object_or_404(self.queryset, pk=id)
-        
+
         if recipe.author != request.user:
             return Response(
                 {'detail': 'У вас нет прав для редактирования этого рецепта.'},
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        if request.method == 'GET':            
+        if request.method == 'GET':
             serializer = self.get_serializer(recipe)
             return Response(serializer.data)
 
-        if request.method == 'PATCH':            
+        if request.method == 'PATCH':
             serializer = self.get_serializer(
                 recipe, data=request.data, partial=True
             )
@@ -58,7 +58,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response({'short-link': short_link}, status=status.HTTP_200_OK)
 
     def generate_short_link(self, recipe):
-        basse_url = self.request.build_absolute_uri('/')        
+        basse_url = self.request.build_absolute_uri('/')
         return f'{basse_url}recipes/{recipe.id}'
 
 
@@ -177,9 +177,9 @@ class DownloadShoppingCartView(APIView):
             for ingredient_in_recipe in ingredients_in_recipe:
                 name = ingredient_in_recipe.ingredient.name
                 amount = ingredient_in_recipe.amount
-                measurement_unit = ingredient_in_recipe.ingredient.measurement_unit
+                meas_unit = ingredient_in_recipe.ingredient.measurement_unit
 
-                key = f"{name} ({measurement_unit})"
+                key = f"{name} ({meas_unit})"
 
                 if key in ingredients:
                     ingredients[key] += amount
