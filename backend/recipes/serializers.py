@@ -221,8 +221,9 @@ class FavoriteSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return {
             'id': instance.recipe.id,
-            'name': instance.recipe.name,                   
-            'image': instance.recipe.image.url if instance.recipe.image.url else None,
+            'name': instance.recipe.name,
+            'image': (instance.recipe.image.url
+                      if instance.recipe.image.url else None),
             'cooking_time': instance.recipe.cooking_time
         }
 

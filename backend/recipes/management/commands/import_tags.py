@@ -6,7 +6,7 @@ from foodgram.settings import CSV_FILE_DIR
 from recipes.models import Tags
 
 
-class Command(BaseCommand):    
+class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         with open(
